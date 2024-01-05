@@ -14,6 +14,7 @@ public class MeasurementsController : Controller
     [Route("measurements")]
     public IActionResult Index()
     {
-        return View();
+        var measurements = _db.Measurements.ToList();
+        return View(measurements);
     }
 }

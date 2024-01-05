@@ -1,7 +1,13 @@
+@model List<Measurement>
 @{
     ViewBag.Title = "Measurements";
 }
 
 <div class="container">
-    <p>Hello from measurements!</p>
+    @{
+        foreach (var measurement in @Model)
+        {
+            <a href="/measurement/@measurement.Id">Измерение №@measurement.Id</a>
+        }
+    }
 </div>

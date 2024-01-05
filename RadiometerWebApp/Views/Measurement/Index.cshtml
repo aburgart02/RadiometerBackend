@@ -5,6 +5,10 @@
 }
 
 <div class="container">
-    <p>Hello from measurement!</p>
-    <a href="/measurement/download/@Model.Id">@Model.Id</a>
+    <p>Сотрудник: @Model.Surname @Model.Name @Model.Patronymic</p>
+    <p>Дата: @Model.Time</p>
+    <p>Пациент: @Model.Patient</p>
+    <p>Устройство: @Model.Device</p>
+    <p>Описание: @Model.Description</p>
+    <a href="/measurement/download/@Model.Id">Загрузить данные</a>
 </div>
