@@ -1,7 +1,10 @@
+@using RadiometerWebApp.Models
+@model Measurement
 @{
     ViewBag.Title = "Measurement";
 }
 
 <div class="container">
     <p>Hello from measurement!</p>
+    <a href="/measurement/download/@Model.Id">@Model.Id</a>
 </div>
