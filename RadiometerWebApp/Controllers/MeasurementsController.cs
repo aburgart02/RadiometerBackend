@@ -1,15 +1,10 @@
-﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RadiometerWebApp.Controllers;
 
-public class HomeController : Controller
+public class MeasurementsController : Controller
 {
-    public HomeController()
-    {
-        
-    }
-    
+    [Route("measurements")]
     public IActionResult Index()
     {
         return View();
