@@ -1,0 +1,13 @@
+services:
+  radiometerwebapp:
+    image: base_final
+    ports:
+      - "8080:80"
+      - "8081:443"
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "8081"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "password"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/RadiometerWebApp.pfx"
+    volumes:
+      - ~/.aspnet/https:/https:ro
