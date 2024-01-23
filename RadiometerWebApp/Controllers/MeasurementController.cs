@@ -14,10 +14,17 @@ public class MeasurementController : Controller
     
     [HttpGet]
     [Route("measurement/{id}")]
-    public IActionResult Index(int id)
+    public IActionResult GetMeasurement(int id)
     {
         var measurement = _db.Measurements.ToList().FirstOrDefault(x => x.Id == id);
         return View(measurement);
+    }
+    
+    [Route("measurements")]
+    public IActionResult GetMeasurements()
+    {
+        var measurements = _db.Measurements.ToList();
+        return View(measurements);
     }
     
     [HttpPost]
@@ -28,18 +35,15 @@ public class MeasurementController : Controller
         
         using var fileStream = file.OpenReadStream();
         var measurementFile = new byte[file.Length];
-        var number = fileStream.Read(measurementFile, 0, (int)file.Length);
 
         var measurementData = HttpContext.Request.Form;
-        var measurement = new Measurement() { 
-            Surname = measurementData["surname"].ToString(), 
-            Name = measurementData["name"].ToString(), 
-            Patronymic = measurementData["patronymic"].ToString(),
+        var measurement = new Measurement() {
             Time = DateTime.Parse(measurementData["time"].ToString()).ToUniversalTime(),
-            Patient = measurementData["patient"].ToString(),
-            Device = measurementData["device"].ToString(),
             Data = measurementFile,
-            Description = measurementData["description"].ToString()
+            Description = measurementData["description"].ToString(),
+            UserId = Convert.ToInt32(measurementData["userId"]),
+            PatientId = Convert.ToInt32(measurementData["patientId"]),
+            DeviceId = Convert.ToInt32(measurementData["deviceId"]),
         };
         
         _db.Measurements.Add(measurement);
