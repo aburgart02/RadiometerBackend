@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
 
@@ -18,5 +19,13 @@ public class DeviceController : Controller
     {
         _db.Devices.Add(device);
         _db.SaveChanges();
+    }
+    
+    [HttpGet]
+    [Route("devices")]
+    public string GetDevices()
+    {
+        var devices = _db.Devices.ToList();
+        return JsonSerializer.Serialize(devices);
     }
 }
