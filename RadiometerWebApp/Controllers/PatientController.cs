@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
 
@@ -16,6 +17,7 @@ public class PatientController : Controller
     [Route("add-patient")]
     public void AddPatient(Patient patient)
     {
+        patient.BirthDate = patient.BirthDate.ToUniversalTime();
         if (!_db.Patients.Any(x => x.Name == patient.Name
                                    && x.Surname == patient.Surname
                                    && x.BirthDate == patient.BirthDate))
@@ -23,5 +25,13 @@ public class PatientController : Controller
             _db.Patients.Add(patient);
             _db.SaveChanges();
         }
+    }
+    
+    [HttpGet]
+    [Route("patients")]
+    public string GetPatients()
+    {
+        var patients = _db.Patients.ToList();
+        return JsonSerializer.Serialize(patients);
     }
 }
