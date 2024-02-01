@@ -20,8 +20,8 @@ public class AccountController : Controller
     [Route("login")]
     public IActionResult Login(Credentials credentials)
     {
-        var identity = GetIdentity(credentials);
-        if (identity == null)
+        var userData = GetIdentity(credentials);
+        if (userData == null)
         {
             return Unauthorized();
         }
@@ -30,7 +30,7 @@ public class AccountController : Controller
         var jwt = new JwtSecurityToken(
             notBefore: now,
             expires: now.AddDays(TokenConfiguration.LifetimeInDays),
-            claims: identity.Claims,
+            claims: userData.Value.claimsIdentity.Claims,
             signingCredentials: new SigningCredentials(AuthOptions.AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         var tokenValue = Json(encodedJwt).Value.ToString();
@@ -43,10 +43,17 @@ public class AccountController : Controller
             };
         _db.Tokens.Add(token);
         _db.SaveChanges();
-        return Ok(tokenValue);
+        
+        var response = new
+        {
+            token = tokenValue,
+            userId = userData.Value.Id
+        };
+        
+        return Ok(response);
     }
     
-    private ClaimsIdentity? GetIdentity(Credentials credentials)
+    private (ClaimsIdentity claimsIdentity, int Id)? GetIdentity(Credentials credentials)
     {
         var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login && x.Password == credentials.Password);
         if (user != null)
@@ -59,7 +66,7 @@ public class AccountController : Controller
             ClaimsIdentity? claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                     ClaimsIdentity.DefaultRoleClaimType);
-            return claimsIdentity;
+            return (claimsIdentity, user.Id);
         }
         
         return null;

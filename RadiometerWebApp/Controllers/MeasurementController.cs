@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
+using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -29,8 +30,11 @@ public class MeasurementController : Controller
     
     [HttpPost]
     [Route("add-measurement")]
-    public void UploadMeasurement()
+    public IActionResult UploadMeasurement()
     {
+        if (!TokenValidator.IsTokenValid(_db, Request.Headers["Token"]))
+            return Unauthorized();
+        
         var file = HttpContext.Request.Form.Files.GetFile("file");
         
         using var fileStream = file.OpenReadStream();
@@ -48,6 +52,8 @@ public class MeasurementController : Controller
         
         _db.Measurements.Add(measurement);
         _db.SaveChanges();
+
+        return Ok();
     }
     
     [HttpGet]
