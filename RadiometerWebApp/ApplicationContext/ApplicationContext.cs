@@ -17,6 +17,8 @@ public class ApplicationContext : DbContext
     
     public DbSet<Log> Logs { get; set; }
     
+    public DbSet<AuthorizationToken> Tokens { get; set; }
+
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options)
         : base(options)
@@ -28,5 +30,6 @@ public class ApplicationContext : DbContext
     {
         builder.Entity<User>().HasIndex(u => u.Login).IsUnique();
         builder.Entity<Device>().HasIndex(l => l.Name).IsUnique();
+        builder.Entity<AuthorizationToken>().HasIndex(t => t.Token).IsUnique();
     }
 }

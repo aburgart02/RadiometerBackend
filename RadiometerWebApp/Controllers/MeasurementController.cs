@@ -28,7 +28,7 @@ public class MeasurementController : Controller
     }
     
     [HttpPost]
-    [Route("upload-measurement")]
+    [Route("add-measurement")]
     public void UploadMeasurement()
     {
         var file = HttpContext.Request.Form.Files.GetFile("file");
