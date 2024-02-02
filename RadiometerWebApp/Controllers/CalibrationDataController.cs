@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RadiometerWebApp.Models;
+using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -14,20 +16,27 @@ public class CalibrationDataController : Controller
     }
     
     [HttpPost]
-    [Route("add-calibration-data")]
-    public void AddCalibrationData()
+    [Route("add-calibration")]
+    public IActionResult AddCalibrationData()
     {
-        var file = HttpContext.Request.Form.Files.GetFile("file");
+        if (!TokenValidator.IsTokenValid(_db, Request.Headers["Token"]))
+            return Unauthorized();
         
-        using var fileStream = file.OpenReadStream();
-        var calibrationFile = new byte[file.Length];
+        var file = HttpContext.Request.Form.Files.GetFile("file");
+        byte[] calibrationFile;
+        
+        using (var memoryStream = new MemoryStream())
+        {
+            file.CopyToAsync(memoryStream);
+            calibrationFile = memoryStream.ToArray();
+        }
 
         var calibrationForm = HttpContext.Request.Form;
         var name = calibrationForm["name"].ToString();
         var deviceId = Convert.ToInt32(calibrationForm["deviceId"]);
         var calibration = new CalibrationData() {
             Name = name,
-            Date = DateTime.Parse(calibrationForm["time"].ToString()).ToUniversalTime(),
+            Date = DateTime.Parse(calibrationForm["date"].ToString()).ToUniversalTime(),
             Data = calibrationFile,
             Description = calibrationForm["description"].ToString(),
             DeviceId = deviceId
@@ -41,5 +50,18 @@ public class CalibrationDataController : Controller
             _db.CalibrationDatas.Add(calibration);
             _db.SaveChanges();
         }
+
+        return Ok();
+    }
+    
+    [HttpGet]
+    [Route("calibrations")]
+    public IActionResult GetCalibrationDatas()
+    {
+        if (!TokenValidator.IsTokenValid(_db, Request.Headers["Token"]))
+            return Unauthorized();
+        
+        var calibrations = _db.CalibrationDatas.ToList();
+        return Ok(JsonSerializer.Serialize(calibrations));
     }
 }

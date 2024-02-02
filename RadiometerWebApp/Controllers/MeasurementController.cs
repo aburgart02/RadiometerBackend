@@ -36,9 +36,13 @@ public class MeasurementController : Controller
             return Unauthorized();
         
         var file = HttpContext.Request.Form.Files.GetFile("file");
+        byte[] measurementFile;
         
-        using var fileStream = file.OpenReadStream();
-        var measurementFile = new byte[file.Length];
+        using (var memoryStream = new MemoryStream())
+        {
+            file.CopyToAsync(memoryStream);
+            measurementFile = memoryStream.ToArray();
+        }
 
         var measurementData = HttpContext.Request.Form;
         var measurement = new Measurement() {
