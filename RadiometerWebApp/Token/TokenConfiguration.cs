@@ -1,4 +1,4 @@
-namespace RadiometerWebApp.AuthOptions;
+namespace RadiometerWebApp.Token;
 
 public class TokenConfiguration
 {

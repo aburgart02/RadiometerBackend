@@ -2,8 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using RadiometerWebApp.AuthOptions;
 using RadiometerWebApp.Models;
+using RadiometerWebApp.Token;
+using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -31,7 +32,7 @@ public class AccountController : Controller
             notBefore: now,
             expires: now.AddDays(TokenConfiguration.LifetimeInDays),
             claims: userData.Value.claimsIdentity.Claims,
-            signingCredentials: new SigningCredentials(AuthOptions.AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         var tokenValue = Json(encodedJwt).Value.ToString();
         var token = new AuthorizationToken()
@@ -55,7 +56,8 @@ public class AccountController : Controller
     
     private (ClaimsIdentity claimsIdentity, int Id)? GetIdentity(Credentials credentials)
     {
-        var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login && x.Password == credentials.Password);
+        var password = HashCalculator.CalculateHash(credentials.Password);
+        var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login && x.Password == password);
         if (user != null)
         {
             var claims = new List<Claim>

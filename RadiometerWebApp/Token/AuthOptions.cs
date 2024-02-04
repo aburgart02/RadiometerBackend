@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace RadiometerWebApp.AuthOptions;
+namespace RadiometerWebApp.Token;
 
 public static class AuthOptions
 {
