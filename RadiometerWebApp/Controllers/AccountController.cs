@@ -56,10 +56,13 @@ public class AccountController : Controller
     
     private (ClaimsIdentity claimsIdentity, int Id)? GetIdentity(Credentials credentials)
     {
-        var password = HashCalculator.CalculateHash(credentials.Password);
-        var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login && x.Password == password);
+        var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login);
         if (user != null)
         {
+            if (HashCalculator.CalculateHash(credentials.Password, user.Salt) != user.Password)
+            {
+                return null;
+            }
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),

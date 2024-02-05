@@ -17,7 +17,9 @@ public class UserController : Controller
     [Route("add-user")]
     public void AddUser(User user)
     {
-        user.Password = HashCalculator.CalculateHash(user.Password);
+        var salt = HashCalculator.GenerateRandomString();
+        user.Salt = salt;
+        user.Password = HashCalculator.CalculateHash(user.Password, salt);
         _db.Users.Add(user);
         _db.SaveChanges();
     }
