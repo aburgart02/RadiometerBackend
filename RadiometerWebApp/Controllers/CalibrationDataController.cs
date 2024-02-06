@@ -1,8 +1,8 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RadiometerWebApp.Models;
-using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -15,13 +15,11 @@ public class CalibrationDataController : Controller
         _db = context;
     }
     
+    [Authorize]
     [HttpPost]
     [Route("add-calibration")]
     public IActionResult AddCalibrationData()
     {
-        if (!TokenValidator.IsTokenValid(_db, Request.Headers["Token"]))
-            return Unauthorized();
-        
         var file = HttpContext.Request.Form.Files.GetFile("file");
         byte[] calibrationFile;
         
@@ -54,13 +52,11 @@ public class CalibrationDataController : Controller
         return Ok();
     }
     
+    [Authorize]
     [HttpGet]
     [Route("calibrations")]
     public IActionResult GetCalibrationDatas()
     {
-        if (!TokenValidator.IsTokenValid(_db, Request.Headers["Token"]))
-            return Unauthorized();
-        
         var calibrations = _db.CalibrationDatas.ToList();
         return Ok(JsonSerializer.Serialize(calibrations));
     }

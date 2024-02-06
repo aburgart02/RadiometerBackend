@@ -29,29 +29,21 @@ public class AccountController : Controller
 
         var now = DateTime.UtcNow;
         var jwt = new JwtSecurityToken(
+            issuer: AuthOptions.Issuer,
+            audience: AuthOptions.Audience,
             notBefore: now,
-            expires: now.AddDays(TokenConfiguration.LifetimeInDays),
             claims: userData.Value.claimsIdentity.Claims,
+            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LifetimeInMinutes)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-        var tokenValue = Json(encodedJwt).Value.ToString();
-        var token = new AuthorizationToken()
-            { 
-                Token = tokenValue, 
-                EmissionDate = now, 
-                ExpirationDate = now.AddDays(TokenConfiguration.LifetimeInDays), 
-                Revoked = false 
-            };
-        _db.Tokens.Add(token);
-        _db.SaveChanges();
-        
+
         var response = new
         {
-            token = tokenValue,
+            access_token = encodedJwt,
             userId = userData.Value.Id
         };
         
-        return Ok(response);
+        return Ok(Json(response));
     }
     
     private (ClaimsIdentity claimsIdentity, int Id)? GetIdentity(Credentials credentials)
