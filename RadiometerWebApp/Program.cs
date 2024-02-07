@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .WithOrigins("http://localhost:3000")
                 .AllowCredentials()
-                .WithHeaders("Authorization");
+                .AllowAnyHeader();
         });
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
