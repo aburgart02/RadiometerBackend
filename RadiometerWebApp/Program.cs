@@ -5,12 +5,24 @@ using RadiometerWebApp;
 using RadiometerWebApp.Token;
 
 var builder = WebApplication.CreateBuilder(args);
+var configurationName = "AllowAll";
 
 builder.Services.AddControllersWithViews();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(configurationName,
+        builder =>
+        {
+            builder
+                .AllowAnyMethod()
+                .WithOrigins("http://localhost:3000")
+                .AllowCredentials()
+                .WithHeaders("Authorization");
+        });
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -39,7 +51,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseCors(b => b.AllowAnyOrigin());
+app.UseCors(configurationName);
 
 app.UseAuthentication();
 app.UseAuthorization();
