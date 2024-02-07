@@ -17,7 +17,7 @@ public class DeviceController : Controller
     [Authorize]
     [HttpPost]
     [Route("add-device")]
-    public IActionResult AddDevices(Device device)
+    public IActionResult AddDevices([FromBody] Device device)
     {
         _db.Devices.Add(device);
         _db.SaveChanges();

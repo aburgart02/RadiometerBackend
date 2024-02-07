@@ -17,7 +17,7 @@ public class PatientController : Controller
     [Authorize]
     [HttpPost]
     [Route("add-patient")]
-    public IActionResult AddPatient(Patient patient)
+    public IActionResult AddPatient([FromBody] Patient patient)
     {
         patient.BirthDate = patient.BirthDate.ToUniversalTime();
         if (!_db.Patients.Any(x => x.Name == patient.Name

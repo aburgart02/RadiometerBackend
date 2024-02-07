@@ -19,7 +19,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [Route("login")]
-    public IActionResult Login(Credentials credentials)
+    public IActionResult Login([FromBody] Credentials credentials)
     {
         var userData = GetIdentity(credentials);
         if (userData == null)
