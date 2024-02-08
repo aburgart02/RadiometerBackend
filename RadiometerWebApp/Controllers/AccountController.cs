@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RadiometerWebApp.Models;
@@ -17,6 +18,14 @@ public class AccountController : Controller
         _db = context;
     }
 
+    [Authorize]
+    [HttpGet]
+    [Route("checkAuth")]
+    public IActionResult CheckAuth()
+    {
+        return Ok();
+    }
+    
     [HttpPost]
     [Route("login")]
     public IActionResult Login([FromBody] Credentials credentials)
