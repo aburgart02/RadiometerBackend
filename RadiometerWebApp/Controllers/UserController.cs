@@ -15,12 +15,16 @@ public class UserController : Controller
     
     [HttpPost]
     [Route("add-user")]
-    public void AddUser(User user)
+    public IActionResult AddUser(User user)
     {
+        if (_db.Users.Any(x => x.Login == user.Login)) 
+            return BadRequest();
+        
         var salt = HashCalculator.GenerateRandomString();
         user.Salt = salt;
         user.Password = HashCalculator.CalculateHash(user.Password, salt);
         _db.Users.Add(user);
         _db.SaveChanges();
+        return Ok();
     }
 }

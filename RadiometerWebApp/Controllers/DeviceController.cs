@@ -19,6 +19,9 @@ public class DeviceController : Controller
     [Route("add-device")]
     public IActionResult AddDevices([FromBody] Device device)
     {
+        if (_db.Devices.Any(x => x.Name == device.Name)) 
+            return BadRequest();
+        
         _db.Devices.Add(device);
         _db.SaveChanges();
         return Ok();

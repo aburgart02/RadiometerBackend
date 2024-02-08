@@ -43,12 +43,11 @@ public class CalibrationDataController : Controller
         if (_db.Devices
             .Include(x => x.CalibrationDatas)
             .FirstOrDefault(x => x.Id == deviceId)!.CalibrationDatas
-            .All(x => x.Name != name))
-        {
-            _db.CalibrationDatas.Add(calibration);
-            _db.SaveChanges();
-        }
-
+            .Any(x => x.Name == name)) 
+            return BadRequest();
+        
+        _db.CalibrationDatas.Add(calibration);
+        _db.SaveChanges();
         return Ok();
     }
     

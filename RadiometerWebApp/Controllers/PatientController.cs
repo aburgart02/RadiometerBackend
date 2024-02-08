@@ -20,14 +20,13 @@ public class PatientController : Controller
     public IActionResult AddPatient([FromBody] Patient patient)
     {
         patient.BirthDate = patient.BirthDate.ToUniversalTime();
-        if (!_db.Patients.Any(x => x.Name == patient.Name
-                                   && x.Surname == patient.Surname
-                                   && x.BirthDate == patient.BirthDate))
-        {
-            _db.Patients.Add(patient);
-            _db.SaveChanges();
-        }
-
+        if (_db.Patients.Any(x => x.Name == patient.Name
+                                  && x.Surname == patient.Surname
+                                  && x.BirthDate == patient.BirthDate)) 
+            return BadRequest();
+        
+        _db.Patients.Add(patient);
+        _db.SaveChanges();
         return Ok();
     }
     
