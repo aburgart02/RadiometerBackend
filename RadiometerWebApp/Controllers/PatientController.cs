@@ -31,6 +31,25 @@ public class PatientController : Controller
     }
     
     [Authorize]
+    [HttpPut]
+    [Route("update-patient")]
+    public IActionResult UpdatePatient([FromBody] Patient patient)
+    {
+        var dbPatient = _db.Patients.FirstOrDefault(x => x.Id == patient.Id);
+        if (dbPatient == null)
+            return BadRequest();
+
+        dbPatient.Name = patient.Name;
+        dbPatient.Surname = patient.Surname;
+        dbPatient.Patronymic = patient.Patronymic;
+        dbPatient.BirthDate = patient.BirthDate.ToUniversalTime();
+        dbPatient.Sex = patient.Sex;
+        dbPatient.Notes = patient.Notes;
+        _db.SaveChanges();
+        return Ok();
+    }
+    
+    [Authorize]
     [HttpGet]
     [Route("patients")]
     public IActionResult GetPatients()
