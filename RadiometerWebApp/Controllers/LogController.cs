@@ -23,7 +23,7 @@ public class LogController : Controller
         _db.SaveChanges();
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     [Route("logs")]
     public IActionResult GetLogs()
