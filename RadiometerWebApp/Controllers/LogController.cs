@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
 
@@ -12,11 +14,21 @@ public class LogController : Controller
         _db = context;
     }
     
+    [Authorize]
     [HttpPost]
     [Route("add-log")]
     public void AddLog(Log log)
     {
         _db.Logs.Add(log);
         _db.SaveChanges();
+    }
+
+    [Authorize]
+    [HttpGet]
+    [Route("logs")]
+    public IActionResult GetLogs()
+    {
+        var logs = _db.Logs.ToList();
+        return Ok(JsonSerializer.Serialize(logs));
     }
 }

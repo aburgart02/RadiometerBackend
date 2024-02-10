@@ -52,6 +52,7 @@ public class AccountController : Controller
             userId = userData.Value.Id
         };
         
+        Logger.AddLog(_db, "AccountController", "Authorization", $"{credentials.Login} зашёл в систему");
         return Ok(Json(response));
     }
     
