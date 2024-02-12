@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
+using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -19,6 +20,9 @@ public class DeviceController : Controller
     [Route("add-device")]
     public IActionResult AddDevices([FromBody] Device device)
     {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+            return Unauthorized();
+        
         if (_db.Devices.Any(x => x.Name == device.Name)) 
             return BadRequest();
         
@@ -32,6 +36,9 @@ public class DeviceController : Controller
     [Route("devices")]
     public IActionResult GetDevices()
     {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+            return Unauthorized();
+        
         var devices = _db.Devices.ToList();
         return Ok(JsonSerializer.Serialize(devices));
     }

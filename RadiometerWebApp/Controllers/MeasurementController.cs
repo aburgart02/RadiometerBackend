@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
+using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -35,6 +36,9 @@ public class MeasurementController : Controller
     [Route("add-measurement")]
     public IActionResult UploadMeasurement()
     {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+            return Unauthorized();
+        
         var file = HttpContext.Request.Form.Files.GetFile("file");
         byte[] measurementFile;
         
@@ -65,6 +69,9 @@ public class MeasurementController : Controller
     [Route("measurement/download/{id}")]
     public IActionResult DownloadMeasurement(int id)
     {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+            return Unauthorized();
+        
         var data = _db.Measurements.ToList().FirstOrDefault(x => x.Id == id).Data;
         var content = new MemoryStream(data);
         var contentType = "application/octet-stream";

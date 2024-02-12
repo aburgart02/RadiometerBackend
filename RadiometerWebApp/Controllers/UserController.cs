@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
 using RadiometerWebApp.Utils;
@@ -13,6 +14,7 @@ public class UserController : Controller
         _db = context;
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [Route("add-user")]
     public IActionResult AddUser(User user)
