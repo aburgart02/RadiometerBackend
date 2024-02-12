@@ -36,7 +36,7 @@ public class MeasurementController : Controller
     [Route("add-measurement")]
     public IActionResult UploadMeasurement()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var file = HttpContext.Request.Form.Files.GetFile("file");
@@ -69,7 +69,7 @@ public class MeasurementController : Controller
     [Route("measurement/download/{id}")]
     public IActionResult DownloadMeasurement(int id)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var data = _db.Measurements.ToList().FirstOrDefault(x => x.Id == id).Data;

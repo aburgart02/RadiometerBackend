@@ -23,7 +23,7 @@ public class AccountController : Controller
     [Route("checkAuth")]
     public IActionResult CheckAuth()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         return Ok();
@@ -58,39 +58,7 @@ public class AccountController : Controller
         Logger.AddLog(_db, "AccountController", "Authorization", $"{credentials.Login} зашёл в систему");
         return Ok(Json(response));
     }
-    
-    [Authorize(Roles = "Admin")]
-    [HttpGet]
-    [Route("get-token")]
-    public IActionResult GetToken()
-    {
-        var now = DateTime.UtcNow;
-        var jwt = new JwtSecurityToken(
-            issuer: AuthOptions.Issuer,
-            audience: AuthOptions.Audience,
-            notBefore: now,
-            claims: new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, Role.Researcher.ToString())
-            },
-            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LifetimeInMinutes)),
-            signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-        var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-        
-        var token = new AuthorizationToken()
-        { 
-            Token = encodedJwt, 
-            EmissionDate = now, 
-            ExpirationDate = now.AddDays(AuthOptions.LifetimeInMinutes), 
-            Revoked = false 
-        };
-        
-        _db.Tokens.Add(token);
-        _db.SaveChanges();
-        
-        return Ok(encodedJwt);
-    }
-    
+
     private (ClaimsIdentity claimsIdentity, int Id)? GetIdentity(Credentials credentials)
     {
         var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login);

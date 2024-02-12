@@ -20,7 +20,7 @@ public class PatientController : Controller
     [Route("add-patient")]
     public IActionResult AddPatient([FromBody] Patient patient)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         patient.BirthDate = patient.BirthDate.ToUniversalTime();
@@ -39,7 +39,7 @@ public class PatientController : Controller
     [Route("update-patient")]
     public IActionResult UpdatePatient([FromBody] Patient patient)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var dbPatient = _db.Patients.FirstOrDefault(x => x.Id == patient.Id);
@@ -61,7 +61,7 @@ public class PatientController : Controller
     [Route("patients")]
     public IActionResult GetPatients()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var patients = _db.Patients.ToList();

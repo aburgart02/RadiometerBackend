@@ -21,7 +21,7 @@ public class CalibrationDataController : Controller
     [Route("add-calibration")]
     public IActionResult AddCalibrationData()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var file = HttpContext.Request.Form.Files.GetFile("file");
@@ -60,7 +60,7 @@ public class CalibrationDataController : Controller
     [Route("calibrations")]
     public IActionResult GetCalibrationDatas()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var calibrations = _db.CalibrationDatas.ToList();

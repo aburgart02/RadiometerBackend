@@ -20,7 +20,7 @@ public class DeviceController : Controller
     [Route("add-device")]
     public IActionResult AddDevices([FromBody] Device device)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         if (_db.Devices.Any(x => x.Name == device.Name)) 
@@ -36,7 +36,7 @@ public class DeviceController : Controller
     [Route("devices")]
     public IActionResult GetDevices()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Token"]))
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
         var devices = _db.Devices.ToList();
