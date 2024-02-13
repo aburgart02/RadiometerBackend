@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RadiometerWebApp.Models;
 using RadiometerWebApp.Utils;
 
@@ -52,6 +53,24 @@ public class PatientController : Controller
         dbPatient.BirthDate = patient.BirthDate.ToUniversalTime();
         dbPatient.Sex = patient.Sex;
         dbPatient.Notes = patient.Notes;
+        _db.SaveChanges();
+        return Ok();
+    }
+    
+    [Authorize]
+    [HttpPost]
+    [Route("delete-patient")]
+    public IActionResult DeletePatient([FromBody] Patient patient)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var dbPatient = _db.Patients.Include(x => x.Measurements)
+            .FirstOrDefault(x => x.Id == patient.Id);
+        if (dbPatient == null || dbPatient.Measurements.Count > 0)
+            return BadRequest();
+
+        _db.Remove(dbPatient);
         _db.SaveChanges();
         return Ok();
     }
