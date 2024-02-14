@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RadiometerWebApp.Models;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -13,7 +14,7 @@ public class LogController : Controller
         _db = context;
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Role.Admin)]
     [HttpGet]
     [Route("logs")]
     public IActionResult GetLogs()

@@ -71,7 +71,7 @@ public class AccountController : Controller
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role)
             };
             ClaimsIdentity? claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,

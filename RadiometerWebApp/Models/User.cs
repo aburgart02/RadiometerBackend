@@ -27,7 +27,7 @@ public class User
     
     public string Salt { get; set; }
     
-    public Role Role { get; set; }
+    public string Role { get; set; }
     
     public bool Revoked { get; set; }
     

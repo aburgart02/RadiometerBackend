@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RadiometerWebApp.Models;
 using RadiometerWebApp.Token;
-using RadiometerWebApp.Utils;
 
 namespace RadiometerWebApp.Controllers;
 
@@ -19,7 +18,7 @@ public class TokenController : Controller
         _db = context;
     }
     
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Role.Admin)]
     [HttpPost]
     [Route("add-token")]
     public IActionResult AddToken([FromBody] AuthorizationToken token)
@@ -31,7 +30,7 @@ public class TokenController : Controller
             notBefore: now,
             claims: new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, Role.Researcher.ToString())
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, Role.Researcher)
             },
             expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LifetimeInMinutes)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
@@ -52,7 +51,7 @@ public class TokenController : Controller
         return Ok(encodedJwt);
     }
     
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Role.Admin)]
     [HttpGet]
     [Route("tokens")]
     public IActionResult GetTokens()
@@ -61,7 +60,7 @@ public class TokenController : Controller
         return Ok(JsonSerializer.Serialize(tokens));
     }
     
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Role.Admin)]
     [HttpPut]
     [Route("update-token")]
     public IActionResult UpdateToken([FromBody] AuthorizationToken token)
@@ -76,7 +75,7 @@ public class TokenController : Controller
         return Ok();
     }
     
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Role.Admin)]
     [HttpPost]
     [Route("delete-token")]
     public IActionResult DeleteToken([FromBody] AuthorizationToken token)

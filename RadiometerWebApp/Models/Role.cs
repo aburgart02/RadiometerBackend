@@ -1,7 +1,7 @@
 namespace RadiometerWebApp.Models;
 
-public enum Role
+public struct Role
 {
-    Researcher,
-    Admin
+    public const string Researcher = "Researcher";
+    public const string Admin = "Admin";
 }
