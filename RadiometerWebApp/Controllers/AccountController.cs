@@ -62,7 +62,7 @@ public class AccountController : Controller
     private (ClaimsIdentity claimsIdentity, int Id)? GetIdentity(Credentials credentials)
     {
         var user = _db.Users.FirstOrDefault(x => x.Login == credentials.Login);
-        if (user != null)
+        if (user != null && !user.Revoked)
         {
             if (HashCalculator.CalculateHash(credentials.Password, user.Salt) != user.Password)
             {

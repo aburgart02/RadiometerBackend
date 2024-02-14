@@ -18,7 +18,7 @@ public class UserController : Controller
     [Authorize(Roles = Role.Admin)]
     [HttpPost]
     [Route("add-user")]
-    public IActionResult AddUser(User user)
+    public IActionResult AddUser([FromBody] User user)
     {
         if (_db.Users.Any(x => x.Login == user.Login)) 
             return BadRequest();
@@ -26,6 +26,7 @@ public class UserController : Controller
         var salt = HashCalculator.GenerateRandomString();
         user.Salt = salt;
         user.Password = HashCalculator.CalculateHash(user.Password, salt);
+        user.BirthDate = user.BirthDate?.ToUniversalTime();
         _db.Users.Add(user);
         _db.SaveChanges();
         return Ok();
