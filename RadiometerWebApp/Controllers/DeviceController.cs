@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RadiometerWebApp.Models;
 using RadiometerWebApp.Utils;
 
@@ -27,6 +28,44 @@ public class DeviceController : Controller
             return BadRequest();
         
         _db.Devices.Add(device);
+        _db.SaveChanges();
+        return Ok();
+    }
+    
+    [Authorize]
+    [HttpPut]
+    [Route("update-device")]
+    public IActionResult UpdateDevice([FromBody] Device device)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var dbDevice = _db.Devices.FirstOrDefault(x => x.Id == device.Id);
+        if (dbDevice == null)
+            return BadRequest();
+
+        dbDevice.Name = device.Name;
+        dbDevice.Description = device.Description;
+        _db.SaveChanges();
+        return Ok();
+    }
+    
+    [Authorize]
+    [HttpPost]
+    [Route("delete-device")]
+    public IActionResult DeleteDevice([FromBody] Device device)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var dbDevice = _db.Devices
+            .Include(x => x.Measurements)
+            .Include(x => x.CalibrationDatas)
+            .FirstOrDefault(x => x.Id == device.Id);
+        if (dbDevice == null || dbDevice.Measurements.Count > 0 || dbDevice.CalibrationDatas.Count > 0)
+            return BadRequest();
+
+        _db.Remove(dbDevice);
         _db.SaveChanges();
         return Ok();
     }
