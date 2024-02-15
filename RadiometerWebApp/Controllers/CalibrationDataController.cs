@@ -56,6 +56,42 @@ public class CalibrationDataController : Controller
     }
     
     [Authorize]
+    [HttpPost]
+    [Route("delete-calibration")]
+    public IActionResult DeleteCalibration([FromBody] CalibrationData calibration)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var dbCalibration = _db.CalibrationDatas
+            .FirstOrDefault(x => x.Id == calibration.Id);
+        if (dbCalibration == null)
+            return BadRequest();
+
+        _db.Remove(dbCalibration);
+        _db.SaveChanges();
+        return Ok();
+    }
+    
+    [Authorize]
+    [HttpPut]
+    [Route("update-calibration")]
+    public IActionResult UpdateCalibration([FromBody] CalibrationData calibration)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var dbCalibration = _db.CalibrationDatas.FirstOrDefault(x => x.Id == calibration.Id);
+        if (dbCalibration == null)
+            return BadRequest();
+
+        dbCalibration.Name = calibration.Name;
+        dbCalibration.Description = calibration.Description;
+        _db.SaveChanges();
+        return Ok();
+    }
+    
+    [Authorize]
     [HttpGet]
     [Route("calibrations")]
     public IActionResult GetCalibrationDatas()
