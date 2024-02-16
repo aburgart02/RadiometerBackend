@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RadiometerWebApp.Models;
@@ -13,22 +14,40 @@ public class MeasurementController : Controller
     {
         _db = context;
     }
-    
+
     [Authorize]
     [HttpGet]
-    [Route("measurement/{id}")]
-    public IActionResult GetMeasurement(int id)
-    {
-        var measurement = _db.Measurements.ToList().FirstOrDefault(x => x.Id == id);
-        return View(measurement);
-    }
-    
-    [Authorize]
     [Route("measurements")]
     public IActionResult GetMeasurements()
     {
-        var measurements = _db.Measurements.ToList();
-        return View(measurements);
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var measurements = _db.Measurements.Select(x => new
+        {
+            Id = x.Id,
+            Time = x.Time,
+            Description = x.Description,
+            UserId = x.UserId,
+            PatientId = x.PatientId,
+            DeviceId = x.DeviceId
+        }).ToList();
+        return Ok(JsonSerializer.Serialize(measurements));
+    }
+    
+    [Authorize]
+    [HttpGet]
+    [Route("measurements/{id}")]
+    public IActionResult DownloadFile(int id)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var measurement = _db.Measurements.FirstOrDefault(x => x.Id == id);
+        if (measurement == null)
+            return BadRequest();
+
+        return File(measurement.Data, "application/octet-stream");
     }
     
     [Authorize]
@@ -62,20 +81,5 @@ public class MeasurementController : Controller
         _db.SaveChanges();
 
         return Ok();
-    }
-    
-    [Authorize]
-    [HttpGet]
-    [Route("measurement/download/{id}")]
-    public IActionResult DownloadMeasurement(int id)
-    {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
-        var data = _db.Measurements.ToList().FirstOrDefault(x => x.Id == id).Data;
-        var content = new MemoryStream(data);
-        var contentType = "application/octet-stream";
-        var fileName = "data";
-        return File(content, contentType, fileName);
     }
 }

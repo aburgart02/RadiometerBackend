@@ -88,8 +88,8 @@ public class UserController : Controller
     
     [Authorize(Roles = Role.Admin)]
     [HttpGet]
-    [Route("users")]
-    public IActionResult GetUsers()
+    [Route("users-data")]
+    public IActionResult GetUsersData()
     {
         var users = _db.Users.Select(x => new
         {
@@ -103,6 +103,24 @@ public class UserController : Controller
             Login = x.Login,
             Role = x.Role,
             Revoked = x.Revoked
+        }).ToList();
+        return Ok(JsonSerializer.Serialize(users));
+    }
+    
+    [Authorize]
+    [HttpGet]
+    [Route("users")]
+    public IActionResult GetUsers()
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var users = _db.Users.Select(x => new
+        {
+            Id = x.Id,
+            Name = x.Name,
+            Surname = x.Surname,
+            Patronymic = x.Patronymic,
         }).ToList();
         return Ok(JsonSerializer.Serialize(users));
     }
