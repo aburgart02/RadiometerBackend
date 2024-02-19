@@ -121,6 +121,7 @@ public class UserController : Controller
             Name = x.Name,
             Surname = x.Surname,
             Patronymic = x.Patronymic,
+            BirthDate = x.BirthDate
         }).ToList();
         return Ok(JsonSerializer.Serialize(users));
     }
