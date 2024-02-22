@@ -55,9 +55,6 @@ public class MeasurementController : Controller
     [Route("add-measurement")]
     public IActionResult UploadMeasurement()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var file = HttpContext.Request.Form.Files.GetFile("file");
         byte[] measurementFile;
         

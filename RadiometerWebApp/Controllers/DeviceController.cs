@@ -21,9 +21,6 @@ public class DeviceController : Controller
     [Route("add-device")]
     public IActionResult AddDevices([FromBody] Device device)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         if (_db.Devices.Any(x => x.Name == device.Name)) 
             return BadRequest();
         
@@ -37,9 +34,6 @@ public class DeviceController : Controller
     [Route("update-device")]
     public IActionResult UpdateDevice([FromBody] Device device)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var dbDevice = _db.Devices.FirstOrDefault(x => x.Id == device.Id);
         if (dbDevice == null)
             return BadRequest();
@@ -55,9 +49,6 @@ public class DeviceController : Controller
     [Route("delete-device")]
     public IActionResult DeleteDevice([FromBody] Device device)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var dbDevice = _db.Devices
             .Include(x => x.Measurements)
             .Include(x => x.CalibrationDatas)

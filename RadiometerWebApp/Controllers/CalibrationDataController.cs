@@ -21,9 +21,6 @@ public class CalibrationDataController : Controller
     [Route("add-calibration")]
     public IActionResult AddCalibrationData()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var file = HttpContext.Request.Form.Files.GetFile("file");
         byte[] calibrationFile;
         
@@ -60,9 +57,6 @@ public class CalibrationDataController : Controller
     [Route("delete-calibration")]
     public IActionResult DeleteCalibration([FromBody] CalibrationData calibration)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var dbCalibration = _db.CalibrationDatas
             .FirstOrDefault(x => x.Id == calibration.Id);
         if (dbCalibration == null)
@@ -78,9 +72,6 @@ public class CalibrationDataController : Controller
     [Route("update-calibration")]
     public IActionResult UpdateCalibration([FromBody] CalibrationData calibration)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var dbCalibration = _db.CalibrationDatas.FirstOrDefault(x => x.Id == calibration.Id);
         if (dbCalibration == null)
             return BadRequest();

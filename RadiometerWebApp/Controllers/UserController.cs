@@ -112,9 +112,6 @@ public class UserController : Controller
     [Route("users")]
     public IActionResult GetUsers()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var users = _db.Users.Select(x => new
         {
             Id = x.Id,

@@ -23,9 +23,6 @@ public class AccountController : Controller
     [Route("checkAuth")]
     public IActionResult CheckAuth()
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         return Ok();
     }
     

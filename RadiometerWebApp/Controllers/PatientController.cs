@@ -21,9 +21,6 @@ public class PatientController : Controller
     [Route("add-patient")]
     public IActionResult AddPatient([FromBody] Patient patient)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         patient.BirthDate = patient.BirthDate.ToUniversalTime();
         if (_db.Patients.Any(x => x.Name == patient.Name
                                   && x.Surname == patient.Surname
@@ -40,9 +37,6 @@ public class PatientController : Controller
     [Route("update-patient")]
     public IActionResult UpdatePatient([FromBody] Patient patient)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var dbPatient = _db.Patients.FirstOrDefault(x => x.Id == patient.Id);
         if (dbPatient == null)
             return BadRequest();
@@ -62,9 +56,6 @@ public class PatientController : Controller
     [Route("delete-patient")]
     public IActionResult DeletePatient([FromBody] Patient patient)
     {
-        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
-            return Unauthorized();
-        
         var dbPatient = _db.Patients.Include(x => x.Measurements)
             .FirstOrDefault(x => x.Id == patient.Id);
         if (dbPatient == null || dbPatient.Measurements.Count > 0)
