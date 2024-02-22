@@ -15,7 +15,7 @@ public class MeasurementController : Controller
         _db = context;
     }
 
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
     [HttpGet]
     [Route("measurements")]
     public IActionResult GetMeasurements()
@@ -35,7 +35,7 @@ public class MeasurementController : Controller
         return Ok(JsonSerializer.Serialize(measurements));
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
     [HttpGet]
     [Route("measurements/{id}")]
     public IActionResult DownloadFile(int id)
@@ -50,7 +50,7 @@ public class MeasurementController : Controller
         return File(measurement.Data, "application/octet-stream");
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("add-measurement")]
     public IActionResult UploadMeasurement()

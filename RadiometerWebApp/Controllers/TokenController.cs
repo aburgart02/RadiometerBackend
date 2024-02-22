@@ -30,7 +30,7 @@ public class TokenController : Controller
             notBefore: now,
             claims: new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, Role.Researcher)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, Role.ApiUser)
             },
             expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LifetimeInMinutes)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));

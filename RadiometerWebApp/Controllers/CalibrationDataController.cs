@@ -16,7 +16,7 @@ public class CalibrationDataController : Controller
         _db = context;
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("add-calibration")]
     public IActionResult AddCalibrationData()
@@ -55,7 +55,7 @@ public class CalibrationDataController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("delete-calibration")]
     public IActionResult DeleteCalibration([FromBody] CalibrationData calibration)
@@ -73,7 +73,7 @@ public class CalibrationDataController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPut]
     [Route("update-calibration")]
     public IActionResult UpdateCalibration([FromBody] CalibrationData calibration)
@@ -91,7 +91,7 @@ public class CalibrationDataController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
     [HttpGet]
     [Route("calibrations")]
     public IActionResult GetCalibrationDatas()

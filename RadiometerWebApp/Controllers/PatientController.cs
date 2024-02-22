@@ -16,7 +16,7 @@ public class PatientController : Controller
         _db = context;
     }
 
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("add-patient")]
     public IActionResult AddPatient([FromBody] Patient patient)
@@ -35,7 +35,7 @@ public class PatientController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPut]
     [Route("update-patient")]
     public IActionResult UpdatePatient([FromBody] Patient patient)
@@ -57,7 +57,7 @@ public class PatientController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("delete-patient")]
     public IActionResult DeletePatient([FromBody] Patient patient)
@@ -75,7 +75,7 @@ public class PatientController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
     [HttpGet]
     [Route("patients")]
     public IActionResult GetPatients()

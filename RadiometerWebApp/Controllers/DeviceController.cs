@@ -16,7 +16,7 @@ public class DeviceController : Controller
         _db = context;
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("add-device")]
     public IActionResult AddDevices([FromBody] Device device)
@@ -32,7 +32,7 @@ public class DeviceController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPut]
     [Route("update-device")]
     public IActionResult UpdateDevice([FromBody] Device device)
@@ -50,7 +50,7 @@ public class DeviceController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("delete-device")]
     public IActionResult DeleteDevice([FromBody] Device device)
@@ -70,7 +70,7 @@ public class DeviceController : Controller
         return Ok();
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
     [HttpGet]
     [Route("devices")]
     public IActionResult GetDevices()

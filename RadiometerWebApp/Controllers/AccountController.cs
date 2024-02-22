@@ -18,7 +18,7 @@ public class AccountController : Controller
         _db = context;
     }
 
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpGet]
     [Route("checkAuth")]
     public IActionResult CheckAuth()

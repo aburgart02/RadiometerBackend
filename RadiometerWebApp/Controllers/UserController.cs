@@ -107,7 +107,7 @@ public class UserController : Controller
         return Ok(JsonSerializer.Serialize(users));
     }
     
-    [Authorize]
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpGet]
     [Route("users")]
     public IActionResult GetUsers()
