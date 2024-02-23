@@ -22,7 +22,7 @@ public class UserController : Controller
     public IActionResult AddUser([FromBody] User user)
     {
         if (_db.Users.Any(x => x.Login == user.Login)) 
-            return BadRequest();
+            return BadRequest("User already exist");
         
         var salt = HashCalculator.GenerateRandomString();
         user.Salt = salt;
@@ -40,8 +40,10 @@ public class UserController : Controller
     {
         var dbUser = _db.Users.Include(x => x.Measurements)
             .FirstOrDefault(x => x.Id == user.Id);
-        if (dbUser == null || dbUser.Measurements.Count > 0)
-            return BadRequest();
+        if (dbUser == null)
+            return BadRequest("User doesn't exist");
+        if (dbUser.Measurements.Count > 0)
+            return BadRequest("User has dependent records");
 
         _db.Remove(dbUser);
         _db.SaveChanges();
@@ -55,7 +57,7 @@ public class UserController : Controller
     {
         var dbUser = _db.Users.FirstOrDefault(x => x.Id == user.Id);
         if (dbUser == null)
-            return BadRequest();
+            return BadRequest("User doesn't exist");
 
         dbUser.Login = user.Login;
         dbUser.Name = user.Name;
@@ -77,7 +79,7 @@ public class UserController : Controller
     {
         var dbUser = _db.Users.FirstOrDefault(x => x.Id == user.Id);
         if (dbUser == null)
-            return BadRequest();
+            return BadRequest("User doesn't exist");
         
         var salt = HashCalculator.GenerateRandomString();
         dbUser.Salt = salt;

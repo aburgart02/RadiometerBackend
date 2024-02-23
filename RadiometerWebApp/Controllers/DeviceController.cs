@@ -22,7 +22,7 @@ public class DeviceController : Controller
     public IActionResult AddDevices([FromBody] Device device)
     {
         if (_db.Devices.Any(x => x.Name == device.Name)) 
-            return BadRequest();
+            return BadRequest("Device already exist");
         
         _db.Devices.Add(device);
         _db.SaveChanges();
@@ -36,7 +36,7 @@ public class DeviceController : Controller
     {
         var dbDevice = _db.Devices.FirstOrDefault(x => x.Id == device.Id);
         if (dbDevice == null)
-            return BadRequest();
+            return BadRequest("Device doesn't exist");
 
         dbDevice.Name = device.Name;
         dbDevice.Description = device.Description;
@@ -53,8 +53,10 @@ public class DeviceController : Controller
             .Include(x => x.Measurements)
             .Include(x => x.CalibrationDatas)
             .FirstOrDefault(x => x.Id == device.Id);
-        if (dbDevice == null || dbDevice.Measurements.Count > 0 || dbDevice.CalibrationDatas.Count > 0)
-            return BadRequest();
+        if (dbDevice == null)
+            return BadRequest("Device doesn't exist");
+        if (dbDevice.Measurements.Count > 0 || dbDevice.CalibrationDatas.Count > 0)
+            return BadRequest("Device has dependent records");
 
         _db.Remove(dbDevice);
         _db.SaveChanges();

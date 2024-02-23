@@ -67,7 +67,7 @@ public class TokenController : Controller
     {
         var dbToken = _db.Tokens.FirstOrDefault(x => x.Id == token.Id);
         if (dbToken == null)
-            return BadRequest();
+            return BadRequest("Token doesn't exist");
         
         dbToken.Revoked = token.Revoked;
         dbToken.Description = token.Description;
@@ -82,7 +82,7 @@ public class TokenController : Controller
     {
         var dbToken = _db.Tokens.FirstOrDefault(x => x.Id == token.Id);
         if (dbToken == null)
-            return BadRequest();
+            return BadRequest("Token doesn't exist");
 
         _db.Tokens.Remove(dbToken);
         _db.SaveChanges();

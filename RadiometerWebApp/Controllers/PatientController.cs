@@ -25,7 +25,7 @@ public class PatientController : Controller
         if (_db.Patients.Any(x => x.Name == patient.Name
                                   && x.Surname == patient.Surname
                                   && x.BirthDate == patient.BirthDate)) 
-            return BadRequest();
+            return BadRequest("Patient already exist");
         
         _db.Patients.Add(patient);
         _db.SaveChanges();
@@ -39,7 +39,7 @@ public class PatientController : Controller
     {
         var dbPatient = _db.Patients.FirstOrDefault(x => x.Id == patient.Id);
         if (dbPatient == null)
-            return BadRequest();
+            return BadRequest("Patient doesn't exist");
 
         dbPatient.Name = patient.Name;
         dbPatient.Surname = patient.Surname;
@@ -58,8 +58,10 @@ public class PatientController : Controller
     {
         var dbPatient = _db.Patients.Include(x => x.Measurements)
             .FirstOrDefault(x => x.Id == patient.Id);
-        if (dbPatient == null || dbPatient.Measurements.Count > 0)
-            return BadRequest();
+        if (dbPatient == null)
+            return BadRequest("Patient doesn't exist");
+        if (dbPatient.Measurements.Count > 0)
+            return BadRequest("Patient has dependent records");
 
         _db.Remove(dbPatient);
         _db.SaveChanges();
