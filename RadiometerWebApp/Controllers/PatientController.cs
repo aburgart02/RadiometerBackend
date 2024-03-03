@@ -39,7 +39,7 @@ public class PatientController : Controller
     {
         var dbPatient = _db.Patients.FirstOrDefault(x => x.Id == patient.Id);
         if (dbPatient == null)
-            return BadRequest("Patient doesn't exist");
+            return NotFound("Patient doesn't exist");
 
         dbPatient.Name = patient.Name;
         dbPatient.Surname = patient.Surname;
@@ -59,9 +59,9 @@ public class PatientController : Controller
         var dbPatient = _db.Patients.Include(x => x.Measurements)
             .FirstOrDefault(x => x.Id == patient.Id);
         if (dbPatient == null)
-            return BadRequest("Patient doesn't exist");
+            return NotFound("Patient doesn't exist");
         if (dbPatient.Measurements.Count > 0)
-            return BadRequest("Patient has dependent records");
+            return Conflict("Patient has dependent records");
 
         _db.Remove(dbPatient);
         _db.SaveChanges();

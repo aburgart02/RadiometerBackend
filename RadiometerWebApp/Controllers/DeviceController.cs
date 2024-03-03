@@ -36,7 +36,7 @@ public class DeviceController : Controller
     {
         var dbDevice = _db.Devices.FirstOrDefault(x => x.Id == device.Id);
         if (dbDevice == null)
-            return BadRequest("Device doesn't exist");
+            return NotFound("Device doesn't exist");
 
         dbDevice.Name = device.Name;
         dbDevice.Description = device.Description;
@@ -54,9 +54,9 @@ public class DeviceController : Controller
             .Include(x => x.CalibrationDatas)
             .FirstOrDefault(x => x.Id == device.Id);
         if (dbDevice == null)
-            return BadRequest("Device doesn't exist");
+            return NotFound("Device doesn't exist");
         if (dbDevice.Measurements.Count > 0 || dbDevice.CalibrationDatas.Count > 0)
-            return BadRequest("Device has dependent records");
+            return Conflict("Device has dependent records");
 
         _db.Remove(dbDevice);
         _db.SaveChanges();

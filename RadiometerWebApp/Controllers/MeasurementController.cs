@@ -45,7 +45,7 @@ public class MeasurementController : Controller
         
         var measurement = _db.Measurements.FirstOrDefault(x => x.Id == id);
         if (measurement == null)
-            return BadRequest("Measurement doesn't exist");
+            return NotFound("Measurement doesn't exist");
 
         return File(measurement.Data, "application/octet-stream");
     }

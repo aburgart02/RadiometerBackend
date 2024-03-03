@@ -60,7 +60,7 @@ public class CalibrationDataController : Controller
         var dbCalibration = _db.CalibrationDatas
             .FirstOrDefault(x => x.Id == calibration.Id);
         if (dbCalibration == null)
-            return BadRequest("Calibration doesn't exist");
+            return NotFound("Calibration doesn't exist");
 
         _db.Remove(dbCalibration);
         _db.SaveChanges();
@@ -74,7 +74,7 @@ public class CalibrationDataController : Controller
     {
         var dbCalibration = _db.CalibrationDatas.FirstOrDefault(x => x.Id == calibration.Id);
         if (dbCalibration == null)
-            return BadRequest("Calibration doesn't exist");
+            return NotFound("Calibration doesn't exist");
 
         dbCalibration.Name = calibration.Name;
         dbCalibration.Description = calibration.Description;

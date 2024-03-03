@@ -41,9 +41,9 @@ public class UserController : Controller
         var dbUser = _db.Users.Include(x => x.Measurements)
             .FirstOrDefault(x => x.Id == user.Id);
         if (dbUser == null)
-            return BadRequest("User doesn't exist");
+            return NotFound("User doesn't exist");
         if (dbUser.Measurements.Count > 0)
-            return BadRequest("User has dependent records");
+            return Conflict("User has dependent records");
 
         _db.Remove(dbUser);
         _db.SaveChanges();
@@ -57,7 +57,7 @@ public class UserController : Controller
     {
         var dbUser = _db.Users.FirstOrDefault(x => x.Id == user.Id);
         if (dbUser == null)
-            return BadRequest("User doesn't exist");
+            return NotFound("User doesn't exist");
 
         dbUser.Login = user.Login;
         dbUser.Name = user.Name;
@@ -79,7 +79,7 @@ public class UserController : Controller
     {
         var dbUser = _db.Users.FirstOrDefault(x => x.Id == user.Id);
         if (dbUser == null)
-            return BadRequest("User doesn't exist");
+            return NotFound("User doesn't exist");
         
         var salt = HashCalculator.GenerateRandomString();
         dbUser.Salt = salt;
