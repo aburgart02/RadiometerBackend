@@ -24,6 +24,7 @@ public class TokenController : Controller
     public IActionResult AddToken([FromBody] AuthorizationToken token)
     {
         var now = DateTime.UtcNow;
+        var expirationDate = token.ExpirationDate?.ToUniversalTime();
         var jwt = new JwtSecurityToken(
             issuer: AuthOptions.Issuer,
             audience: AuthOptions.Audience,
@@ -32,7 +33,7 @@ public class TokenController : Controller
             {
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, Role.ApiUser)
             },
-            expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LifetimeInMinutes)),
+            expires: expirationDate,
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
         
@@ -40,7 +41,7 @@ public class TokenController : Controller
         { 
             Token = encodedJwt, 
             EmissionDate = now, 
-            ExpirationDate = token.ExpirationDate?.ToUniversalTime(), 
+            ExpirationDate = expirationDate, 
             Revoked = false,
             Description = token.Description
         };
