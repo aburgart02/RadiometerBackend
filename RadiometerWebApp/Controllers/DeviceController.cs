@@ -71,7 +71,12 @@ public class DeviceController : Controller
         if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
-        var devices = _db.Devices.ToList();
+        var devices = _db.Devices.Select(x => new
+        {
+            Id = x.Id,
+            Name = x.Name,
+            Description = x.Description
+        }).ToList();
         return Ok(JsonSerializer.Serialize(devices));
     }
 }

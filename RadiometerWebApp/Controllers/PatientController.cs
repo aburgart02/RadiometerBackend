@@ -76,7 +76,16 @@ public class PatientController : Controller
         if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
         
-        var patients = _db.Patients.ToList();
+        var patients = _db.Patients.Select(x => new
+        {
+            Id = x.Id,
+            Name = x.Name,
+            Surname = x.Surname,
+            Patronymic = x.Patronymic,
+            BirthDate = x.BirthDate,
+            Sex = x.Sex,
+            Notes = x.Notes,
+        }).ToList();
         return Ok(JsonSerializer.Serialize(patients));
     }
 }

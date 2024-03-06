@@ -37,8 +37,76 @@ public class MeasurementController : Controller
     
     [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
     [HttpGet]
-    [Route("measurements/{id}")]
-    public IActionResult DownloadFile(int id)
+    [Route("measurements-with-data")]
+    public IActionResult GetMeasurementsWithData()
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var measurements = _db.Measurements.Select(x => new
+        {
+            Id = x.Id,
+            Time = x.Time,
+            Description = x.Description,
+            UserId = x.UserId,
+            PatientId = x.PatientId,
+            DeviceId = x.DeviceId,
+            Data = x.Data
+        }).ToList();
+        return Ok(JsonSerializer.Serialize(measurements));
+    }
+    
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
+    [HttpGet]
+    [Route("measurement/{id}")]
+    public IActionResult GetMeasurement(int id)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var measurement = _db.Measurements
+            .Where(x => x.Id == id)
+            .Select(x => new
+            {
+                Id = x.Id,
+                Time = x.Time,
+                Description = x.Description,
+                UserId = x.UserId,
+                PatientId = x.PatientId,
+                DeviceId = x.DeviceId
+            })
+            .FirstOrDefault();
+        return Ok(JsonSerializer.Serialize(measurement));
+    }
+    
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
+    [HttpGet]
+    [Route("measurement-with-data/{id}")]
+    public IActionResult GetMeasurementWithData(int id)
+    {
+        if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
+            return Unauthorized();
+        
+        var measurement = _db.Measurements
+            .Where(x => x.Id == id)
+            .Select(x => new
+            {
+                Id = x.Id,
+                Time = x.Time,
+                Description = x.Description,
+                UserId = x.UserId,
+                PatientId = x.PatientId,
+                DeviceId = x.DeviceId,
+                Data = x.Data
+            })
+            .FirstOrDefault();
+        return Ok(JsonSerializer.Serialize(measurement));
+    }
+    
+    [Authorize(Roles = $"{Role.Researcher},{Role.Admin},{Role.ApiUser}")]
+    [HttpGet]
+    [Route("download-measurement/{id}")]
+    public IActionResult DownloadMeasurementFile(int id)
     {
         if (TokenValidator.IsTokenInvalid(_db, Request.Headers["Authorization"]))
             return Unauthorized();
