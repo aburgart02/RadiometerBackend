@@ -18,9 +18,9 @@ builder.Services.AddCors(options =>
         {
             builder
                 .AllowAnyMethod()
-                .WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
                 .AllowCredentials()
-                .AllowAnyHeader();
+                .SetIsOriginAllowed(_ => true);
         });
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -47,7 +47,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
