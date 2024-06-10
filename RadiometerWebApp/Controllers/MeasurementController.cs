@@ -8,8 +8,9 @@ namespace RadiometerWebApp.Controllers;
 
 public class MeasurementController : Controller
 {
+    private const int MaxBufferSize = 100000000;
     private ApplicationContext _db;
-    
+
     public MeasurementController(ApplicationContext context)
     {
         _db = context;
@@ -121,17 +122,17 @@ public class MeasurementController : Controller
     [Authorize(Roles = $"{Role.Researcher},{Role.Admin}")]
     [HttpPost]
     [Route("add-measurement")]
-    public IActionResult UploadMeasurement()
+    public async Task<IActionResult> UploadMeasurement()
     {
-        var file = HttpContext.Request.Form.Files.GetFile("file");
-        byte[] measurementFile;
+        var buffer = new byte[MaxBufferSize];
+        var file = await HttpContext.Request.Form.Files.GetFile("file").OpenReadStream().ReadAsync(buffer);
         
-        using (var memoryStream = new MemoryStream())
-        {
-            file.CopyToAsync(memoryStream);
-            measurementFile = memoryStream.ToArray();
-        }
-
+        var i = buffer.Length - 1;
+        while(buffer[i] == 0)
+            --i;
+        var measurementFile = new byte[i+1];
+        Array.Copy(buffer, measurementFile, i+1);
+        
         var measurementData = HttpContext.Request.Form;
         var measurement = new Measurement() {
             Time = DateTime.Parse(measurementData["time"].ToString()).ToUniversalTime(),
